@@ -77,12 +77,25 @@
     _pointLayer.strokeColor = pointColor.CGColor;
 }
 
+- (void)setIsShowHead:(BOOL)isShowHead {
+    _isShowHead = isShowHead;
+    if (isShowHead) {
+        _pointLayer.hidden = NO;
+    }else {
+        _pointLayer.hidden = YES;
+    }
+}
+
 
 - (void)setScore:(double)score {
     if (score < 0 || score > 100) {
         return;
     }
     double anAngle = -1 * M_PI * score / 50.f;
+    _isClockWise = YES;
+    if (_isClockWise) {
+        anAngle = M_PI * score / 50.f;
+    }
     [self setAngle:anAngle];
 }
 
@@ -91,7 +104,7 @@
 - (void)setAngle:(double)angle {
     _angle = angle;
     CGRect rect = self.bounds;
-    UIBezierPath *innerPath = [UIBezierPath bezierPathWithArcCenter:CGPointMake(rect.size.width*0.5, rect.size.height*0.5) radius:rect.size.width*0.5 startAngle:-M_PI_2 endAngle:_angle-M_PI_2 clockwise:NO];
+    UIBezierPath *innerPath = [UIBezierPath bezierPathWithArcCenter:CGPointMake(rect.size.width*0.5, rect.size.height*0.5) radius:rect.size.width*0.5 startAngle:-M_PI_2 endAngle:_angle-M_PI_2 clockwise:_isClockWise];
     _innerLayer.path = innerPath.CGPath;
     //添加动画
     CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
@@ -118,7 +131,9 @@
     CGAffineTransform t = CGAffineTransformConcat(CGAffineTransformConcat(CGAffineTransformMakeTranslation(-origin_x, -origin_y),CGAffineTransformMakeScale(radiuscale, radiuscale)),
                                                   CGAffineTransformMakeTranslation(origin_x, origin_y));
     //最后一个参数，1是逆时针，0是顺时针
-    CGPathAddArc(path, &t, origin_x, origin_y, radiusX ,a , b, 1);
+//    CGPathAddArc(path, &t, origin_x, origin_y, radiusX ,a , b, _isClockWise);
+    CGPathAddArc(path, &t, origin_x, origin_y, radiusX ,a , b, !_isClockWise);
+
     pathAnimation.path = path;
     CGPathRelease(path);
     [_pointLayer addAnimation:pathAnimation forKey:@"movePoint"];
@@ -143,3 +158,4 @@
 
 
 @end
+
