@@ -16,10 +16,17 @@
 
 @property (nonatomic,strong) UIColor *pointColor;
 
+//是否是顺时针
+@property (nonatomic,assign) BOOL isClockWise;
+
 //0-100分，100为一个圈
 @property (nonatomic,assign) double score;
+
+//是否有头
+@property (nonatomic,assign) BOOL isShowHead;
 
 
 - (id)initWithFrame:(CGRect)frame andOutR:(CGFloat)r;
 
 @end
+
